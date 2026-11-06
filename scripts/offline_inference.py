@@ -1,6 +1,6 @@
 """Pixal3D single image to GLB, offline on the rez packages: same code as the Pixal3dImageTo3D node.
 
-    rez env pixal3d-1.0.0.cu128 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
+    rez env pixal3d-1.0.0 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
         python offline_inference.py --sfm_data sfm.abc --output_dir out [--low_vram --resolution 1024]
     rez env ... -- python offline_inference.py --image input.png --output_dir out   (MoGe-2 camera, as upstream)
 

@@ -7,7 +7,7 @@ Node environment (`MRPIXAL3D_SUBREQUIRES`):
 
 | Package | Content |
 |---|---|
-| `pixal3d-1.0.0.cu128` | Pixal3D code and its CUDA stack (TRELLIS.2 ops, o_voxel, cumesh, flex_gemm, nvdiffrast, MoGe, natten): pytorch-2.14, cuda-12.8, built for sm_75 (Turing) and sm_86 (Ampere, also runs on Ada), attention through torch sdpa |
+| `pixal3d-1.0.0` | Pixal3D code and its CUDA stack (TRELLIS.2 ops, o_voxel, cumesh, flex_gemm, nvdiffrast, MoGe, natten): pytorch-2.14, cuda-12.8, built for sm_75 (Turing) and sm_86 (Ampere, also runs on Ada), attention through torch sdpa |
 | `pixal3d_nnModels-1.0.0` | Weights: Pixal3D (single and multi-view), DINOv3 ViT-L/16, MoGe-2 ViT-L, BiRefNet (+ RMBG-2.0 on demand) |
 | `naf-1.0.0` | NAF feature upsampler as an offline torch.hub cache (needs `natten`) |
 | `aliceVision-develop` | `pyalicevision`, to read SfMData cameras |
@@ -72,16 +72,16 @@ Stage code lives in `pixal3d_mr/` and is only imported from `processChunk`, in t
 Same code as the nodes, from the command line:
 
 ```
-rez env pixal3d-1.0.0.cu128 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
+rez env pixal3d-1.0.0 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
     python scripts/offline_inference.py --sfm_data sfm.abc --view_id 123 --output_dir out
-rez env pixal3d-1.0.0.cu128 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
+rez env pixal3d-1.0.0 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
     python scripts/offline_inference_mv.py --sfm_data sfm.abc --output_dir out_mv
 ```
 
 ## Tests
 
 ```
-rez env pixal3d-1.0.0.cu128 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop pytest psutil tomli \
+rez env pixal3d-1.0.0 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop pytest psutil tomli \
     -c 'PYTHONPATH=$PYTHONPATH:<meshroom repo> python -m pytest tests -v'
 ```
 

@@ -1,6 +1,6 @@
 """Pixal3D posed views of an SfMData to a GLB in the SfM frame: same code as the Pixal3dMultiViewTo3D node.
 
-    rez env pixal3d-1.0.0.cu128 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
+    rez env pixal3d-1.0.0 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
         python offline_inference_mv.py --sfm_data sfm.abc --output_dir out [--bounds_center x y z --bounds_size s]
 
 Writes out/mesh.glb and out/views/ (the Pixal3D views: transforms.json + images).
