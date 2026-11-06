@@ -15,7 +15,6 @@ from . import common
 logger = logging.getLogger(__name__)
 
 BOUNDS_SOURCES = ("landmarks", "manual")
-MASK_SIZE = 1024  # max size of the images matted for the landmark visual hull
 
 
 def loadInferenceMv():
@@ -35,24 +34,19 @@ def loadRgba(path, rembg=None):
     return rembg(image).convert("RGBA"), True
 
 
-def objectMask(rembg, image):
-    """Foreground mask of an image (at most MASK_SIZE pixels wide)."""
-    small = image.copy()
-    small.thumbnail((MASK_SIZE, MASK_SIZE))
-    return np.asarray(rembg(small.convert("RGB")).getchannel("A")) > 127
-
-
 def run(outputDir, sfmData, mainViewId=-1, boundsSource="landmarks", boundsCenter=None, boundsSize=None,
         seed=42, resolution=1536, lowVram=False, rembg="birefnet", decimationTarget=1000000, textureSize=4096,
-        log=logger.info):
+        masksFolder=None, maskExtension="png", log=logger.info):
     """Generate a textured GLB, in the SfM frame, from all the posed views of an SfMData.
 
     mainViewId: view defining Pixal3D's front, -1: the view looking the most directly at the object.
     boundsSource: "landmarks" (SfM landmarks inside the background removal mask of the views that see them) or
     "manual" (boundsCenter, 3 values, and boundsSize, the largest extent of the object, in SfM units).
+    masksFolder: object masks of the views (see masking), used instead of matting them; views without a mask file
+    there are matted. Without masksFolder, the alpha the images may have is ignored and every view is matted.
     Returns the paths of the written files: mesh (.glb), transforms (.json, the Pixal3D views folder cameras).
     """
-    from . import sfm_camera, sfm_views
+    from . import masking, sfm_camera, sfm_views
 
     if not sfmData or not os.path.isfile(sfmData):
         raise RuntimeError(f"SfMData not found: '{sfmData}'")
@@ -81,8 +75,10 @@ def run(outputDir, sfmData, mainViewId=-1, boundsSource="landmarks", boundsCente
     log("Reading the views")
     images = []
     for view in views:
-        image = sfm_camera.readImage(view).convert("RGB")
-        images.append(sfm_camera.undistort(view, image) if view["hasDistortion"] else image)
+        image, maskPath = masking.loadView(view, masksFolder, maskExtension)
+        images.append(image if maskPath else image.convert("RGB"))  # RGBA: masked, RGB: to be matted
+    if masksFolder:
+        log(f"{sum(image.mode == 'RGBA' for image in images)} of {len(views)} views masked from {masksFolder}")
 
     inference = loadInferenceMv()
     import torch
@@ -100,7 +96,8 @@ def run(outputDir, sfmData, mainViewId=-1, boundsSource="landmarks", boundsCente
         if boundsSource == "landmarks":
             points = sfm_views.landmarks(data)
             log(f"Object bounds from the landmarks ({len(points)}) inside the object masks")
-            masks = [objectMask(matting, image) for image in images]
+            masks = [masking.alphaMask(image) if image.mode == "RGBA" else masking.objectMask(matting, image)
+                     for image in images]
             points = sfm_views.objectLandmarks(points, views, masks)
             if len(points) < sfm_views.MIN_OBJECT_LANDMARKS:
                 raise RuntimeError(f"Only {len(points)} landmarks on the object: use manual bounds.")

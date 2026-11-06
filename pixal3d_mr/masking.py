@@ -14,6 +14,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 MASK_EXTENSIONS = ("png", "exr", "jpg")
+MASK_SIZE = 1024  # max size of the images matted for the landmark visual hull
 
 
 def findMask(masksFolder, extension, view):
@@ -69,4 +70,16 @@ def loadView(view, masksFolder=None, extension="png"):
     if view["hasDistortion"]:
         image = sfm_camera.undistort(view, image)  # also the alpha, 0 outside of the photo
     return image, maskPath
+
+
+def objectMask(rembg, image):
+    """Foreground mask (bool) of an image, matted at most MASK_SIZE pixels wide."""
+    small = image.copy()
+    small.thumbnail((MASK_SIZE, MASK_SIZE))
+    return np.asarray(rembg(small.convert("RGB")).getchannel("A")) > 127
+
+
+def alphaMask(image):
+    """Foreground mask (bool) of an RGBA image."""
+    return np.asarray(image.getchannel("A")) > 127
 

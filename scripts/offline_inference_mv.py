@@ -24,6 +24,9 @@ parser.add_argument("--seed", type=int, default=42)
 parser.add_argument("--resolution", type=int, choices=common.RESOLUTIONS, default=1536)
 parser.add_argument("--low_vram", action="store_true")
 parser.add_argument("--rembg", choices=common.REMBG_MODELS, default="birefnet")
+parser.add_argument("--masks_folder", default=None, help="object masks of the views (<viewId>.<ext>), e.g. from "
+                    "offline_masking.py, instead of removing the background")
+parser.add_argument("--mask_extension", choices=["png", "exr", "jpg"], default="png")
 parser.add_argument("--decimation_target", type=int, default=1000000)
 parser.add_argument("--texture_size", type=int, default=4096)
 args = parser.parse_args()
@@ -42,4 +45,6 @@ multiview_to_3d.run(
     rembg=args.rembg,
     decimationTarget=args.decimation_target,
     textureSize=args.texture_size,
+    masksFolder=args.masks_folder,
+    maskExtension=args.mask_extension,
 )

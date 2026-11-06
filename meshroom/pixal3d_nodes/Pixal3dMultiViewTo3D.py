@@ -1,4 +1,4 @@
-__version__ = "2.0"
+__version__ = "2.1"
 
 import logging
 import os
@@ -25,6 +25,9 @@ view is turned into a Pixal3D view: a virtual camera at the same position lookin
 like Pixal3D's training views, its image being the undistorted photo warped by the exact rotation homography.
 The main view defines Pixal3D's front. Then same processing as Pixal3D's official inference_mv.py.
 
+The object masks come from Masks Folder if given (e.g. from Pixal3dImageMasking): they are warped with the views,
+and used for the landmarks bounds. Views without a mask get their background removed by this node.
+
 Pinhole intrinsics only (with or without distortion). GPU memory and time grow with the number of views: about
 11.5 GB with 4 views, Low VRAM and resolution 1024 (~4 min on an RTX A4000).
 """
@@ -38,6 +41,22 @@ Pinhole intrinsics only (with or without distortion). GPU memory and time grow w
             description="SfMData with the posed views of the object (e.g. the StructureFromMotion output). "
                         "All the posed views are used.",
             value="",
+        ),
+        desc.File(
+            name="masksFolder",
+            label="Masks Folder",
+            description="Object masks of the views (e.g. Pixal3dImageMasking or ImageMasking output), used instead "
+                        "of removing the background: <viewId>.<ext> or <image name>.<ext>, grey, white = object, the "
+                        "size of the image. Views without a mask there get their background removed by this node.",
+            value="",
+        ),
+        desc.ChoiceParam(
+            name="maskExtension",
+            label="Mask Extension",
+            description="File extension of the masks.",
+            values=["png", "exr", "jpg"],
+            value="png",
+            enabled=lambda node: bool(node.masksFolder.value),
         ),
         desc.IntParam(
             name="mainViewId",
@@ -162,4 +181,6 @@ Pinhole intrinsics only (with or without distortion). GPU memory and time grow w
             rembg=node.backgroundRemoval.value,
             decimationTarget=node.decimationTarget.value,
             textureSize=int(node.textureSize.value),
+            masksFolder=node.masksFolder.value or None,
+            maskExtension=node.maskExtension.value,
         )

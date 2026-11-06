@@ -74,6 +74,10 @@ at the canonical front pose. `pixal3d_mr/sfm_views.py` builds that from the SfM:
 - The views are written as an upstream views folder (`views/transforms.json`, with the object frame in the SfM under
   `sfm`), processed as `scripts/inference_mv.py` does, and the mesh is transformed back to the SfM frame.
 
+`Masks Folder`: the masks are warped with the views (the views folder images are then RGBA, and not matted again by
+`inference_mv.py`'s `load_views`), and used for the `landmarks` bounds. Without it, every view is matted twice as
+upstream (the alpha the images may have is ignored): once for the landmark bounds, once in `load_views`.
+
 GPU memory and time grow with the number of views: ~11.5 GB peak with 4 views, `Low VRAM` and resolution 1024
 (~4 min on an RTX A4000).
 
@@ -87,7 +91,7 @@ Same code as the nodes, from the command line:
 rez env pixal3d-1.0.0 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
     python scripts/offline_inference.py --sfm_data sfm.abc --view_id 123 --output_dir out
 rez env pixal3d-1.0.0 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
-    python scripts/offline_inference_mv.py --sfm_data sfm.abc --output_dir out_mv
+    python scripts/offline_inference_mv.py --sfm_data sfm.abc --output_dir out_mv [--masks_folder masks]
 ```
 
 ## Tests

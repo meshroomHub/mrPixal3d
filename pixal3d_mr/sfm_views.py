@@ -136,9 +136,9 @@ def virtualCamera(view, center, size, rotation):
 
 
 def virtualView(view, center, size, rotation, image):
-    """(warped RGB image, Blender camToWorld in the object frame, horizontal FOV) of the view looking at the center.
+    """(warped image, Blender camToWorld in the object frame, horizontal FOV) of the view looking at the center.
 
-    image: the undistorted view image (PIL).
+    image: the undistorted view image (PIL, RGB or RGBA: the alpha is warped too, 0 outside of the photo).
     """
     import cv2
     from PIL import Image
