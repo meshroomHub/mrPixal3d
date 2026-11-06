@@ -12,6 +12,15 @@ Node environment (`MRPIXAL3D_SUBREQUIRES`):
 | `naf-1.0.0` | NAF feature upsampler as an offline torch.hub cache (needs `natten`) |
 | `aliceVision-develop` | `pyalicevision`, to read SfMData cameras |
 
+## Object masks
+
+`Masks Folder` (Pixal3D nodes): object masks used instead of removing the background of the views. It follows the
+AliceVision convention (FeatureExtraction, PrepareDenseScene), so the masks can come from `ImageMasking`,
+`MaskProcessing` or elsewhere: `<viewId>.<ext>`, else `<image name>.<ext>` (`Mask Extension`: png, exr, jpg), grey,
+white = object (0 = background), the size of the original (distorted) image. Soft masks are kept: the mask becomes
+the alpha of the view image, then is undistorted (and warped) with it. A view without a mask file in the folder gets
+its background removed by the node, as without `Masks Folder`.
+
 ## Node: Pixal3dImageTo3D
 
 Each view of an SfMData (no direct image input), processed one after the other with the models loaded once, to a
@@ -35,6 +44,9 @@ the camera can come from the SfM calibration.
 
 `scripts/offline_inference.py` also takes an image file (`--image`) instead of an SfMData view, and a manual FOV
 (`--fov`, degrees).
+
+With `Masks Folder`, the view's mask replaces the alpha the image may have; the background removal model is not
+run on it.
 
 - `Background Removal`: `birefnet` (ZhengPeng7/BiRefNet, MIT) by default. `rmbg` is the upstream default
   briaai/RMBG-2.0 (CC BY-NC 4.0, gated): download it with `pixal3d_nnModels/1.0.0/download.py --rmbg`.

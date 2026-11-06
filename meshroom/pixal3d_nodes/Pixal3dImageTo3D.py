@@ -1,4 +1,4 @@
-__version__ = "1.0"
+__version__ = "1.1"
 
 import logging
 import os
@@ -15,7 +15,8 @@ class Pixal3dImageTo3D(desc.Node):
 Generates a textured PBR mesh (GLB) from each view of an SfMData with [Pixal3D](https://github.com/TencentARC/Pixal3D),
 the views being processed one after the other (the models are loaded once).
 
-Each view image is read with its intrinsic (lens distortion removed, pinhole intrinsics only).
+Each view image is read with its intrinsic (lens distortion removed, pinhole intrinsics only), and its mask from
+Masks Folder if given (e.g. from Pixal3dImageMasking).
 Same processing as Pixal3D's official inference.py (same seed, same result):
  - background removal and centering of the subject,
  - camera FOV from the calibrated focal of the view, or estimated with MoGe-2,
@@ -36,6 +37,22 @@ The default settings (all models on the GPU, resolution 1536) need a 24 GB+ GPU.
                         "view with an intrinsic. Pinhole intrinsics only, with or without distortion. The background "
                         "is removed automatically. Pixal3D assumes the object is near the image center.",
             value="",
+        ),
+        desc.File(
+            name="masksFolder",
+            label="Masks Folder",
+            description="Object masks of the views (e.g. Pixal3dImageMasking or ImageMasking output), used instead "
+                        "of removing the background: <viewId>.<ext> or <image name>.<ext>, grey, white = object, the "
+                        "size of the image. Views without a mask there get their background removed by this node.",
+            value="",
+        ),
+        desc.ChoiceParam(
+            name="maskExtension",
+            label="Mask Extension",
+            description="File extension of the masks.",
+            values=["png", "exr", "jpg"],
+            value="png",
+            enabled=lambda node: bool(node.masksFolder.value),
         ),
         desc.BoolParam(
             name="skipFailedViews",
@@ -115,7 +132,8 @@ The default settings (all models on the GPU, resolution 1536) need a 24 GB+ GPU.
         desc.File(
             name="preprocessed",
             label="Preprocessed Image",
-            description="Each view image after background removal and centering, as seen by Pixal3D.",
+            description="Each view image after background removal (or masking) and centering, as seen by "
+                        "Pixal3D.",
             semantic="image",
             value="{nodeCacheFolder}/<VIEW_ID>_preprocessed.png",
         ),
@@ -146,4 +164,6 @@ The default settings (all models on the GPU, resolution 1536) need a 24 GB+ GPU.
             decimationTarget=node.decimationTarget.value,
             textureSize=int(node.textureSize.value),
             skipFailedViews=node.skipFailedViews.value,
+            masksFolder=node.masksFolder.value or None,
+            maskExtension=node.maskExtension.value,
         )

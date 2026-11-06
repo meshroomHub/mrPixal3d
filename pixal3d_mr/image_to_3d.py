@@ -94,7 +94,7 @@ CAMERA_SOURCES = ("sfm", "moge", "manual")
 
 def run(imagePath=None, outputDir=".", seed=42, resolution=1536, lowVram=False, rembg="birefnet",
         fovDegrees=None, sfmData=None, viewIds=None, cameraSource=None, decimationTarget=1000000, textureSize=4096,
-        skipFailedViews=True, log=logger.info):
+        skipFailedViews=True, masksFolder=None, maskExtension="png", log=logger.info):
     """Generate a textured GLB from each view of sfmData (undistorted), or from imagePath.
 
     sfmData: every view with an intrinsic is processed in turn, by view id (or only viewIds), the pipeline loaded once.
@@ -104,6 +104,8 @@ def run(imagePath=None, outputDir=".", seed=42, resolution=1536, lowVram=False, 
     FOV of the preprocessed image). Default: sfm with an SfMData, else manual if fovDegrees is given, else moge.
     skipFailedViews: log a view that fails (e.g. no object found) and go on with the next one, instead of stopping.
     Out of GPU memory errors always stop (the next views would fail the same way), as does every view failing.
+    masksFolder: object masks of the SfMData views (see masking), used instead of matting them; views without a
+    mask file there are matted (or use the alpha their image may have).
     Returns the written files of each processed image: a list of {mesh, preprocessed, camera} paths.
     """
     if sfmData:
@@ -155,7 +157,7 @@ def run(imagePath=None, outputDir=".", seed=42, resolution=1536, lowVram=False, 
             try:
                 results.append(processImage(
                     inference, pipeline, outputDir, view, imagePath, sfmData, cameraSource, fovDegrees, seed,
-                    resolution, decimationTarget, textureSize, log))
+                    resolution, decimationTarget, textureSize, masksFolder, maskExtension, log))
             except torch.OutOfMemoryError:
                 raise
             except Exception:
@@ -174,7 +176,7 @@ def run(imagePath=None, outputDir=".", seed=42, resolution=1536, lowVram=False, 
 
 
 def processImage(inference, pipeline, outputDir, view, imagePath, sfmData, cameraSource, fovDegrees, seed,
-                 resolution, decimationTarget, textureSize, log):
+                 resolution, decimationTarget, textureSize, masksFolder, maskExtension, log):
     """One image (an SfM view, or imagePath if view is None) to its mesh, preprocessed image and camera."""
     import torch
 
@@ -191,13 +193,12 @@ def processImage(inference, pipeline, outputDir, view, imagePath, sfmData, camer
         log(f"Preprocessing {imagePath}")
         inputImage = image_io.read(imagePath)
     else:
-        from . import sfm_camera
+        from . import masking, sfm_camera
         log(f"SfM view {view['viewId']}: {view['imagePath']} ({view['width']}x{view['height']}, fx {view['fx']:.1f} "
             f"px, distortion: {view['hasDistortion']}, posed: {view['camToWorld'] is not None})")
-        inputImage = sfm_camera.readImage(view)
-        if view["hasDistortion"]:
-            log("Removing the lens distortion")
-            inputImage = sfm_camera.undistort(view, inputImage)
+        inputImage, maskPath = masking.loadView(view, masksFolder, maskExtension)
+        if maskPath:
+            log(f"Mask: {maskPath}")
     image, crop = preprocess(pipeline, inputImage)
     image_io.write(paths["preprocessed"], image)
 

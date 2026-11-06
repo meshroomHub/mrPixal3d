@@ -28,6 +28,9 @@ parser.add_argument("--resolution", type=int, choices=[1024, 1536], default=1536
 parser.add_argument("--low_vram", action="store_true")
 parser.add_argument("--rembg", choices=common.REMBG_MODELS, default="birefnet")
 parser.add_argument("--fov", type=float, default=None, help="horizontal FOV in degrees (manual camera)")
+parser.add_argument("--masks_folder", default=None, help="object masks of the views (<viewId>.<ext>), e.g. from "
+                    "offline_masking.py, instead of removing the background")
+parser.add_argument("--mask_extension", choices=["png", "exr", "jpg"], default="png")
 parser.add_argument("--decimation_target", type=int, default=1000000)
 parser.add_argument("--texture_size", type=int, default=4096)
 parser.add_argument("--stop_on_failure", action="store_true", help="stop at the first failed view instead of skipping it")
@@ -47,5 +50,7 @@ image_to_3d.run(
     fovDegrees=args.fov,
     decimationTarget=args.decimation_target,
     textureSize=args.texture_size,
+    masksFolder=args.masks_folder,
+    maskExtension=args.mask_extension,
     skipFailedViews=not args.stop_on_failure,
 )
