@@ -15,11 +15,18 @@ Node environment (`MRPIXAL3D_SUBREQUIRES`):
 ## Object masks
 
 `Masks Folder` (Pixal3D nodes): object masks used instead of removing the background of the views. It follows the
-AliceVision convention (FeatureExtraction, PrepareDenseScene), so the masks can come from `ImageMasking`,
-`MaskProcessing` or elsewhere: `<viewId>.<ext>`, else `<image name>.<ext>` (`Mask Extension`: png, exr, jpg), grey,
+AliceVision convention (FeatureExtraction, PrepareDenseScene), so the masks can come from `Pixal3dImageMasking`,
+`ImageMasking`, `MaskProcessing` or elsewhere: `<viewId>.<ext>`, else `<image name>.<ext>` (`Mask Extension`: png, exr, jpg), grey,
 white = object (0 = background), the size of the original (distorted) image. Soft masks are kept: the mask becomes
 the alpha of the view image, then is undistorted (and warped) with it. A view without a mask file in the folder gets
 its background removed by the node, as without `Masks Folder`.
+
+## Node: Pixal3dImageMasking
+
+The object mask of each view of an SfMData (`<viewId>.png`, 8 bit grey, white = object, original image size), with
+the background removal model of the Pixal3D pipelines (`Background Removal`, as below). An image that already has an
+alpha channel gets its alpha as mask. These are the masks the Pixal3D nodes would compute: computed once, they can
+be checked or edited before the generation, and fed to their `Masks Folder`.
 
 ## Node: Pixal3dImageTo3D
 
@@ -88,6 +95,8 @@ Stage code lives in `pixal3d_mr/` and is only imported from `processChunk`, in t
 Same code as the nodes, from the command line:
 
 ```
+rez env pixal3d-1.0.0 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
+    python scripts/offline_masking.py --sfm_data sfm.abc --output_dir masks
 rez env pixal3d-1.0.0 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
     python scripts/offline_inference.py --sfm_data sfm.abc --view_id 123 --output_dir out
 rez env pixal3d-1.0.0 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \

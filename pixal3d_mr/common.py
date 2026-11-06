@@ -26,6 +26,7 @@ RESOLUTIONS = (1024, 1536)
 
 _singleViewConfig = {"name": "pipeline_birefnet.json"}  # read by the patched single-view from_pretrained
 _scripts = {}
+_setup = []
 
 
 def env(name, package):
@@ -60,7 +61,11 @@ def checkResolution(resolution):
         raise ValueError(f"Resolution must be one of {RESOLUTIONS}, got {resolution}.")
 
 
-def _setupProcess():
+def setupProcess():
+    """Offline redirects and patches, once per process, before importing pixal3d."""
+    if _setup:
+        return
+    _setup.append(True)
     # Before huggingface_hub / transformers are imported: they read these at import time.
     os.environ["HF_HUB_OFFLINE"] = "1"
     os.environ["TRANSFORMERS_OFFLINE"] = "1"
@@ -99,8 +104,7 @@ def loadScript(name):
     """Import an official script ("inference" or "inference_mv") with its hub ids redirected to local files."""
     if name in _scripts:
         return _scripts[name]
-    if not _scripts:
-        _setupProcess()
+    setupProcess()
     module = importlib.import_module(name)
 
     dino = os.path.join(modelsPath(), "dinov3-vitl16-pretrain-lvd1689m")
@@ -116,6 +120,16 @@ def loadScript(name):
 
     _scripts[name] = module
     return module
+
+
+def loadRembgModel(rembg):
+    """The background removal model alone, built from the pipeline json as from_pretrained does (same masks)."""
+    import json
+    setupProcess()
+    from pixal3d.pipelines import rembg as rembgModels
+    with open(os.path.join(pixal3dPath(), pipelineConfig(rembg))) as f:
+        config = json.load(f)["args"]["rembg_model"]
+    return getattr(rembgModels, config["name"])(**config["args"])
 
 
 def setSingleViewConfig(name):

@@ -1,6 +1,6 @@
 """Object masks (background removal) of SfMData views.
 
-The Pixal3D nodes read them (masksFolder) instead of matting the views themselves.
+Pixal3dImageMasking writes them, the Pixal3D nodes read them (masksFolder) instead of matting the views themselves.
 Mask files follow the AliceVision convention (FeatureExtraction, PrepareDenseScene): <masksFolder>/<viewId>.<ext>,
 else <masksFolder>/<image file stem>.<ext>; grey (color masks are converted to grey), white = object, the size of
 the view image (distorted, as the photo). Soft masks are kept: they become the alpha of the view image, as the
@@ -8,8 +8,11 @@ matting model's output does.
 """
 import logging
 import os
+import time
 
 import numpy as np
+
+from . import common
 
 logger = logging.getLogger(__name__)
 
@@ -83,3 +86,47 @@ def alphaMask(image):
     """Foreground mask (bool) of an RGBA image."""
     return np.asarray(image.getchannel("A")) > 127
 
+
+def run(outputDir, sfmData, rembg="birefnet", viewIds=None, log=logger.info):
+    """Write the background removal mask of each view of sfmData (or only viewIds) as <outputDir>/<viewId>.png.
+
+    The mask of an image with an alpha channel (not fully opaque) is its alpha, as Pixal3D uses it as the mask;
+    other images are matted with the background removal model of the Pixal3D pipelines (rembg), at full size.
+    Returns the written mask paths.
+    """
+    from . import image_io, sfm_camera
+
+    if not sfmData or not os.path.isfile(sfmData):
+        raise RuntimeError(f"SfMData not found: '{sfmData}'")
+    data = sfm_camera.loadSfm(sfmData)
+    views = data.getViews()
+    if viewIds is None:
+        viewIds = sorted(views.keys())
+    missing = [v for v in viewIds if v not in views]
+    if missing:
+        raise RuntimeError(f"Views {missing} are not in '{sfmData}'")
+    if not viewIds:
+        raise RuntimeError(f"No view in '{sfmData}'")
+    os.makedirs(outputDir, exist_ok=True)
+
+    start = time.time()
+    log(f"Loading the background removal model ({rembg})")
+    model = common.loadRembgModel(rembg)
+    model.cuda()
+    paths = []
+    for index, viewId in enumerate(viewIds):
+        imagePath = views[viewId].getImage().getImagePath()
+        image = image_io.read(imagePath)
+        if image.mode == "RGBA":
+            log(f"[{index + 1}/{len(viewIds)}] View {viewId}: {imagePath}, mask from its alpha")
+            mask = np.asarray(image.getchannel("A"))
+        else:
+            log(f"[{index + 1}/{len(viewIds)}] View {viewId}: {imagePath}, matting")
+            mask = np.asarray(model(image).getchannel("A"))
+        if not (mask > 0.8 * 255).any():
+            logger.warning(f"View {viewId}: empty mask (no object found)")
+        path = os.path.join(outputDir, f"{viewId}.png")
+        image_io.writeMask(path, mask)
+        paths.append(path)
+    log(f"Done in {time.time() - start:.1f}s: {len(paths)} masks in {outputDir}")
+    return paths

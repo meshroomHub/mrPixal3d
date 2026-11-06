@@ -46,3 +46,14 @@ def write(path, image):
     options.toColorSpace(avimg.EImageColorSpace_SRGB)
     avimg.writeImage(path, out, options)
 
+
+def writeMask(path, mask):
+    """Write a uint8 HxW mask as an 8 bit grey image, no color conversion."""
+    from pyalicevision import image as avimg
+
+    out = avimg.Image_uchar()
+    out.fromNumpyArray(np.ascontiguousarray(np.asarray(mask, dtype=np.uint8)[..., None]))
+    options = avimg.ImageWriteOptions()
+    options.fromColorSpace(avimg.EImageColorSpace_NO_CONVERSION)
+    options.toColorSpace(avimg.EImageColorSpace_NO_CONVERSION)
+    avimg.writeImage(path, out, options)
