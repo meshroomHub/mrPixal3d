@@ -30,7 +30,13 @@ def read(path):
 
 
 def write(path, image):
-    """Write a PIL image as 8 bit sRGB RGB, no color conversion."""
+    """Write a PIL image as 8 bit sRGB, no color conversion: RGBA (straight alpha, PNG) if it has an alpha, else RGB.
+
+    RGBA goes through PIL: OpenImageIO takes the colors as premultiplied by alpha and divides them on writing.
+    """
+    if image.mode == "RGBA":
+        image.save(path)
+        return
     from pyalicevision import image as avimg
 
     out = avimg.Image_RGBColor()
@@ -39,3 +45,4 @@ def write(path, image):
     options.fromColorSpace(avimg.EImageColorSpace_SRGB)
     options.toColorSpace(avimg.EImageColorSpace_SRGB)
     avimg.writeImage(path, out, options)
+
