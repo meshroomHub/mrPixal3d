@@ -1,7 +1,6 @@
 __version__ = "2.1"
 
 import logging
-import os
 
 import meshroom
 from meshroom.core import desc
@@ -144,6 +143,12 @@ Pinhole intrinsics only (with or without distortion). GPU memory and time grow w
 
     outputs = [
         desc.File(
+            name="outputFolder",
+            label="Output Folder",
+            description="Folder of the outputs: mesh.glb and views/ (the Pixal3D views: transforms.json + images).",
+            value="{nodeCacheFolder}",
+        ),
+        desc.File(
             name="output",
             label="Mesh",
             description="Textured mesh (GLB, PBR materials), in the SfM frame.",
@@ -168,7 +173,7 @@ Pinhole intrinsics only (with or without distortion). GPU memory and time grow w
 
         manual = node.boundsSource.value == "manual"
         multiview_to_3d.run(
-            outputDir=os.path.dirname(node.output.value),
+            outputDir=node.outputFolder.value,
             sfmData=node.sfmData.value,
             mainViewId=node.mainViewId.value,
             boundsSource=node.boundsSource.value,

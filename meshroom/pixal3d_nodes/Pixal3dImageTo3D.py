@@ -1,7 +1,6 @@
 __version__ = "1.1"
 
 import logging
-import os
 
 import meshroom
 from meshroom.core import desc
@@ -123,6 +122,13 @@ The default settings (all models on the GPU, resolution 1536) need a 24 GB+ GPU.
 
     outputs = [
         desc.File(
+            name="outputFolder",
+            label="Output Folder",
+            description="Folder of the outputs of every view: <viewId>_mesh.glb, <viewId>_preprocessed.png, "
+                        "<viewId>_camera.json.",
+            value="{nodeCacheFolder}",
+        ),
+        desc.File(
             name="output",
             label="Mesh",
             description="Textured mesh of each view (GLB, PBR materials).",
@@ -154,7 +160,7 @@ The default settings (all models on the GPU, resolution 1536) need a 24 GB+ GPU.
         from pixal3d_mr import image_to_3d
 
         image_to_3d.run(
-            outputDir=os.path.dirname(node.output.value),
+            outputDir=node.outputFolder.value,
             seed=node.seed.value,
             resolution=int(node.resolution.value),
             lowVram=node.lowVram.value,
