@@ -1,0 +1,499 @@
+{
+    "header": {
+        "releaseVersion": "2026.1.0+develop",
+        "fileVersion": "2.2",
+        "template": true
+    },
+    "nodeDescriptions": {
+        "CameraInit": {
+            "12.1": {
+                "inputs": {
+                    "viewpoints": {
+                        "type": "ListAttribute",
+                        "elementDesc": {
+                            "type": "GroupAttribute",
+                            "name": "viewpoint",
+                            "items": {
+                                "viewId": {
+                                    "type": "IntParam",
+                                    "value": -1
+                                },
+                                "poseId": {
+                                    "type": "IntParam",
+                                    "value": -1
+                                },
+                                "path": {
+                                    "type": "File",
+                                    "value": ""
+                                },
+                                "intrinsicId": {
+                                    "type": "IntParam",
+                                    "value": -1
+                                },
+                                "rigId": {
+                                    "type": "IntParam",
+                                    "value": -1
+                                },
+                                "subPoseId": {
+                                    "type": "IntParam",
+                                    "value": -1
+                                },
+                                "metadata": {
+                                    "type": "StringParam",
+                                    "value": ""
+                                }
+                            }
+                        }
+                    },
+                    "intrinsics": {
+                        "type": "ListAttribute",
+                        "elementDesc": {
+                            "type": "GroupAttribute",
+                            "name": "intrinsic",
+                            "items": {
+                                "intrinsicId": {
+                                    "type": "IntParam",
+                                    "value": -1
+                                },
+                                "initialFocalLength": {
+                                    "type": "FloatParam",
+                                    "value": -1.0
+                                },
+                                "focalLength": {
+                                    "type": "FloatParam",
+                                    "value": 1000.0
+                                },
+                                "pixelRatio": {
+                                    "type": "FloatParam",
+                                    "value": 1.0
+                                },
+                                "pixelRatioLocked": {
+                                    "type": "BoolParam",
+                                    "value": true
+                                },
+                                "scaleLocked": {
+                                    "type": "BoolParam",
+                                    "value": false
+                                },
+                                "offsetLocked": {
+                                    "type": "BoolParam",
+                                    "value": false
+                                },
+                                "distortionLocked": {
+                                    "type": "BoolParam",
+                                    "value": false
+                                },
+                                "type": {
+                                    "type": "ChoiceParam",
+                                    "value": "pinhole",
+                                    "values": [
+                                        "pinhole",
+                                        "equidistant",
+                                        "equirectangular"
+                                    ]
+                                },
+                                "distortionType": {
+                                    "type": "ChoiceParam",
+                                    "value": "radialk3",
+                                    "values": [
+                                        "none",
+                                        "radialk1",
+                                        "radialk3",
+                                        "radialk3pt",
+                                        "brown",
+                                        "fisheye4",
+                                        "fisheye1"
+                                    ]
+                                },
+                                "width": {
+                                    "type": "IntParam",
+                                    "value": 0
+                                },
+                                "height": {
+                                    "type": "IntParam",
+                                    "value": 0
+                                },
+                                "sensorWidth": {
+                                    "type": "FloatParam",
+                                    "value": 36.0
+                                },
+                                "sensorHeight": {
+                                    "type": "FloatParam",
+                                    "value": 24.0
+                                },
+                                "serialNumber": {
+                                    "type": "StringParam",
+                                    "value": ""
+                                },
+                                "principalPoint": {
+                                    "type": "GroupAttribute",
+                                    "name": "principalPoint",
+                                    "items": {
+                                        "x": {
+                                            "type": "FloatParam",
+                                            "value": 0.0
+                                        },
+                                        "y": {
+                                            "type": "FloatParam",
+                                            "value": 0.0
+                                        }
+                                    }
+                                },
+                                "initializationMode": {
+                                    "type": "ChoiceParam",
+                                    "value": "none",
+                                    "values": [
+                                        "calibrated",
+                                        "estimated",
+                                        "unknown",
+                                        "none"
+                                    ]
+                                },
+                                "distortionInitializationMode": {
+                                    "type": "ChoiceParam",
+                                    "value": "none",
+                                    "values": [
+                                        "calibrated",
+                                        "estimated",
+                                        "unknown",
+                                        "none"
+                                    ]
+                                },
+                                "distortionParams": {
+                                    "type": "ListAttribute",
+                                    "elementDesc": {
+                                        "type": "FloatParam",
+                                        "value": 0.0
+                                    }
+                                },
+                                "undistortionOffset": {
+                                    "type": "GroupAttribute",
+                                    "name": "undistortionOffset",
+                                    "items": {
+                                        "x": {
+                                            "type": "FloatParam",
+                                            "value": 0.0
+                                        },
+                                        "y": {
+                                            "type": "FloatParam",
+                                            "value": 0.0
+                                        }
+                                    }
+                                },
+                                "undistortionParams": {
+                                    "type": "ListAttribute",
+                                    "elementDesc": {
+                                        "type": "FloatParam",
+                                        "value": 0.0
+                                    }
+                                },
+                                "locked": {
+                                    "type": "BoolParam",
+                                    "value": false
+                                }
+                            }
+                        }
+                    },
+                    "sensorDatabase": {
+                        "type": "File",
+                        "value": "${ALICEVISION_SENSOR_DB}"
+                    },
+                    "lensCorrectionProfileInfo": {
+                        "type": "File",
+                        "value": "${ALICEVISION_LENS_PROFILE_INFO}"
+                    },
+                    "lensCorrectionProfileSearchIgnoreCameraModel": {
+                        "type": "BoolParam",
+                        "value": true
+                    },
+                    "defaultFieldOfView": {
+                        "type": "FloatParam",
+                        "value": 45.0
+                    },
+                    "groupCameraFallback": {
+                        "type": "ChoiceParam",
+                        "value": "folder",
+                        "values": [
+                            "global",
+                            "folder",
+                            "image"
+                        ]
+                    },
+                    "rawColorInterpretation": {
+                        "type": "ChoiceParam",
+                        "value": "DCPLinearProcessing",
+                        "values": [
+                            "None",
+                            "LibRawNoWhiteBalancing",
+                            "LibRawWhiteBalancing",
+                            "DCPLinearProcessing",
+                            "DCPMetadata",
+                            "Auto"
+                        ]
+                    },
+                    "colorProfileDatabase": {
+                        "type": "File",
+                        "value": "${ALICEVISION_COLOR_PROFILE_DB}"
+                    },
+                    "errorOnMissingColorProfile": {
+                        "type": "BoolParam",
+                        "value": true
+                    },
+                    "viewIdMethod": {
+                        "type": "ChoiceParam",
+                        "value": "metadata",
+                        "values": [
+                            "metadata",
+                            "filename"
+                        ]
+                    },
+                    "viewIdRegex": {
+                        "type": "StringParam",
+                        "value": ".*?(\\d+)"
+                    },
+                    "isSequence": {
+                        "type": "BoolParam",
+                        "value": false
+                    },
+                    "verboseLevel": {
+                        "type": "ChoiceParam",
+                        "value": "info",
+                        "values": [
+                            "fatal",
+                            "error",
+                            "warning",
+                            "info",
+                            "debug",
+                            "trace"
+                        ]
+                    }
+                },
+                "outputs": {
+                    "output": {
+                        "type": "File",
+                        "value": "{nodeCacheFolder}/cameraInit.sfm"
+                    }
+                }
+            }
+        },
+        "CopyFiles": {
+            "1.3": {
+                "inputs": {
+                    "inputFiles": {
+                        "type": "ListAttribute",
+                        "elementDesc": {
+                            "type": "File",
+                            "value": ""
+                        }
+                    },
+                    "output": {
+                        "type": "File",
+                        "value": ""
+                    },
+                    "verboseLevel": {
+                        "type": "ChoiceParam",
+                        "value": "info",
+                        "values": [
+                            "fatal",
+                            "error",
+                            "warning",
+                            "info",
+                            "debug",
+                            "trace"
+                        ]
+                    }
+                },
+                "outputs": {}
+            }
+        },
+        "Pixal3dImageMasking": {
+            "1.0": {
+                "inputs": {
+                    "sfmData": {
+                        "type": "File",
+                        "value": ""
+                    },
+                    "backgroundRemoval": {
+                        "type": "ChoiceParam",
+                        "value": "birefnet",
+                        "values": [
+                            "birefnet",
+                            "rmbg"
+                        ]
+                    },
+                    "verboseLevel": {
+                        "type": "ChoiceParam",
+                        "value": "info",
+                        "values": [
+                            "fatal",
+                            "error",
+                            "warning",
+                            "info",
+                            "debug",
+                            "trace"
+                        ]
+                    }
+                },
+                "outputs": {
+                    "output": {
+                        "type": "File",
+                        "value": "{nodeCacheFolder}"
+                    },
+                    "masks": {
+                        "type": "File",
+                        "value": "{nodeCacheFolder}/<VIEW_ID>.png"
+                    }
+                }
+            }
+        },
+        "Pixal3dImageTo3D": {
+            "1.1": {
+                "inputs": {
+                    "sfmData": {
+                        "type": "File",
+                        "value": ""
+                    },
+                    "masksFolder": {
+                        "type": "File",
+                        "value": ""
+                    },
+                    "maskExtension": {
+                        "type": "ChoiceParam",
+                        "value": "png",
+                        "values": [
+                            "png",
+                            "exr",
+                            "jpg"
+                        ]
+                    },
+                    "skipFailedViews": {
+                        "type": "BoolParam",
+                        "value": true
+                    },
+                    "seed": {
+                        "type": "IntParam",
+                        "value": 42
+                    },
+                    "resolution": {
+                        "type": "ChoiceParam",
+                        "value": 1024,
+                        "values": [
+                            1024,
+                            1536
+                        ]
+                    },
+                    "lowVram": {
+                        "type": "BoolParam",
+                        "value": true
+                    },
+                    "cameraSource": {
+                        "type": "ChoiceParam",
+                        "value": "sfm",
+                        "values": [
+                            "sfm",
+                            "moge"
+                        ]
+                    },
+                    "backgroundRemoval": {
+                        "type": "ChoiceParam",
+                        "value": "birefnet",
+                        "values": [
+                            "birefnet",
+                            "rmbg"
+                        ]
+                    },
+                    "decimationTarget": {
+                        "type": "IntParam",
+                        "value": 1000000
+                    },
+                    "textureSize": {
+                        "type": "ChoiceParam",
+                        "value": 4096,
+                        "values": [
+                            1024,
+                            2048,
+                            4096
+                        ]
+                    },
+                    "verboseLevel": {
+                        "type": "ChoiceParam",
+                        "value": "info",
+                        "values": [
+                            "fatal",
+                            "error",
+                            "warning",
+                            "info",
+                            "debug",
+                            "trace"
+                        ]
+                    }
+                },
+                "outputs": {
+                    "outputFolder": {
+                        "type": "File",
+                        "value": "{nodeCacheFolder}"
+                    },
+                    "output": {
+                        "type": "File",
+                        "value": "{nodeCacheFolder}/<VIEW_ID>_mesh.glb"
+                    },
+                    "preprocessed": {
+                        "type": "File",
+                        "value": "{nodeCacheFolder}/<VIEW_ID>_preprocessed.png"
+                    },
+                    "camera": {
+                        "type": "File",
+                        "value": "{nodeCacheFolder}/<VIEW_ID>_camera.json"
+                    }
+                }
+            }
+        }
+    },
+    "graph": {
+        "CameraInit_1": {
+            "nodeType": "CameraInit",
+            "version": "12.1",
+            "position": [
+                -267,
+                -43
+            ],
+            "inputs": {}
+        },
+        "CopyFiles_1": {
+            "nodeType": "CopyFiles",
+            "version": "1.3",
+            "position": [
+                363,
+                -43
+            ],
+            "inputs": {
+                "inputFiles": [
+                    "{Pixal3dImageTo3D_1.outputFolder}"
+                ]
+            }
+        },
+        "Pixal3dImageMasking_1": {
+            "nodeType": "Pixal3dImageMasking",
+            "version": "1.0",
+            "position": [
+                -57,
+                -43
+            ],
+            "inputs": {
+                "sfmData": "{CameraInit_1.output}"
+            }
+        },
+        "Pixal3dImageTo3D_1": {
+            "nodeType": "Pixal3dImageTo3D",
+            "version": "1.1",
+            "position": [
+                153,
+                -43
+            ],
+            "inputs": {
+                "sfmData": "{Pixal3dImageMasking_1.sfmData}",
+                "masksFolder": "{Pixal3dImageMasking_1.output}"
+            }
+        }
+    }
+}
