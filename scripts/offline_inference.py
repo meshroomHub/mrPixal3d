@@ -4,7 +4,7 @@
         python offline_inference.py --sfm_data sfm.abc --output_dir out [--low_vram --resolution 1024]
     rez env ... -- python offline_inference.py --image input.png --output_dir out   (MoGe-2 camera, as upstream)
 
-Writes out/<viewId>_mesh.glb, _preprocessed.png and _camera.json for each view (--view_id: only these views),
+Writes out/<image stem>_mesh.glb, _preprocessed.png and _camera.json for each view (--view_id: only these views),
 or out/mesh.glb, out/preprocessed.png and out/camera.json with --image.
 """
 import argparse

@@ -23,20 +23,21 @@ its background removed by the node, as without `Masks Folder`.
 
 ## Node: Pixal3dImageMasking
 
-The object mask of each view of an SfMData (`<viewId>.png`, 8 bit grey, white = object, original image size), with
-the background removal model of the Pixal3D pipelines (`Background Removal`, as below). An image that already has an
-alpha channel gets its alpha as mask. These are the masks the Pixal3D nodes would compute: computed once, they can
-be checked or edited before the generation, and fed to their `Masks Folder`.
+The object mask of each view of an SfMData (`<image>.png`, the view image file name without extension, 8 bit grey,
+white = object, original image size), with the background removal model of the Pixal3D pipelines (`Background
+Removal`, as below). An image that already has an alpha channel gets its alpha as mask. These are the masks the
+Pixal3D nodes would compute: computed once, they can be checked or edited before the generation, and fed to their
+`Masks Folder`.
 
 ## Node: Pixal3dImageTo3D
 
 Each view of an SfMData (no direct image input), processed one after the other with the models loaded once, to a
-textured PBR mesh (`<viewId>_mesh.glb`), plus `<viewId>_preprocessed.png` (background removed, centered: what the
-model sees) and `<viewId>_camera.json` (FOV in radians, distance,
-scale used for the pixel alignment, the view, its intrinsics, pose and the crop box in original pixels, for aligning
-the mesh with the SfM later). The view image is read with pyalicevision and its lens distortion removed (pinhole
-intrinsics only). `Skip Failed Views` (default on): a view that fails is logged and skipped; out of GPU memory, or
-every view failing, still stops the node.
+textured PBR mesh (`<image>_mesh.glb`, `<image>` being the view image file name without extension), plus
+`<image>_preprocessed.png` (background removed, centered: what the model sees) and `<image>_camera.json` (FOV in
+radians, distance, scale used for the pixel alignment, the view, its intrinsics, pose and the crop box in original
+pixels, for aligning the mesh with the SfM later). The view image is read with pyalicevision and its lens distortion
+removed (pinhole intrinsics only). `Skip Failed Views` (default on): a view that fails is logged and skipped; out of
+GPU memory, or every view failing, still stops the node.
 
 Same calls, order and sampler settings as Pixal3D's `scripts/inference.py`, so a given seed gives the same mesh.
 Differences: hub ids are redirected to the local packages, the decimation target and texture size are exposed,

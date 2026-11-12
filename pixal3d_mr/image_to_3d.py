@@ -98,7 +98,7 @@ def run(imagePath=None, outputDir=".", seed=42, resolution=1536, lowVram=False, 
     """Generate a textured GLB from each view of sfmData (undistorted), or from imagePath.
 
     sfmData: every view with an intrinsic is processed in turn, by view id (or only viewIds), the pipeline loaded once.
-    Its outputs are named <viewId>_mesh.glb, <viewId>_preprocessed.png, <viewId>_camera.json; with imagePath:
+    Its outputs are named <image stem>_mesh.glb, _preprocessed.png, _camera.json; with imagePath:
     mesh.glb, preprocessed.png, camera.json.
     cameraSource: "sfm" (calibrated focal of the view), "moge" (MoGe-2 estimate) or "manual" (fovDegrees, horizontal
     FOV of the preprocessed image). Default: sfm with an SfMData, else manual if fovDegrees is given, else moge.
@@ -182,7 +182,8 @@ def processImage(inference, pipeline, outputDir, view, imagePath, sfmData, camer
 
     from . import image_io
 
-    prefix = "" if view is None else f"{view['viewId']}_"
+    # <image file stem>_: Meshroom's <FILESTEM> in the node outputs
+    prefix = "" if view is None else os.path.splitext(os.path.basename(view["imagePath"]))[0] + "_"
     paths = {
         "mesh": os.path.join(outputDir, f"{prefix}mesh.glb"),
         "preprocessed": os.path.join(outputDir, f"{prefix}preprocessed.png"),

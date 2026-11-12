@@ -1,4 +1,4 @@
-__version__ = "1.0"
+__version__ = "1.1"
 
 import logging
 
@@ -16,7 +16,7 @@ RMBG-2.0): the masks Pixal3dImageTo3D and Pixal3dMultiViewTo3D would compute the
 edit before the generation (their Masks Folder input).
 
 An image that already has an alpha channel gets its alpha as mask.
-Output: <viewId>.png, 8 bit grey, white = object, the size of the original image (lens distortion not removed).
+Output: <image>.png (the view image file name without extension), 8 bit grey, white = object, the size of the original image (lens distortion not removed).
 """
 
     gpu = desc.Level.NORMAL
@@ -50,7 +50,7 @@ Output: <viewId>.png, 8 bit grey, white = object, the size of the original image
         desc.File(
             name="output",
             label="Masks Folder",
-            description="Folder of the masks, <viewId>.png.",
+            description="Folder of the masks, <image>.png (the view image file name without extension).",
             value="{nodeCacheFolder}",
         ),
         desc.File(
@@ -58,7 +58,7 @@ Output: <viewId>.png, 8 bit grey, white = object, the size of the original image
             label="Masks",
             description="Mask of each view: 8 bit grey, white = object.",
             semantic="image",
-            value="{nodeCacheFolder}/<VIEW_ID>.png",
+            value="{nodeCacheFolder}/<FILESTEM>.png",
         ),
     ]
 

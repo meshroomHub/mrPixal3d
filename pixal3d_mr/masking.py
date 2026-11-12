@@ -88,7 +88,8 @@ def alphaMask(image):
 
 
 def run(outputDir, sfmData, rembg="birefnet", viewIds=None, log=logger.info):
-    """Write the background removal mask of each view of sfmData (or only viewIds) as <outputDir>/<viewId>.png.
+    """Write the background removal mask of each view of sfmData (or only viewIds) as <outputDir>/<image stem>.png
+    (Meshroom's <FILESTEM>).
 
     The mask of an image with an alpha channel (not fully opaque) is its alpha, as Pixal3D uses it as the mask;
     other images are matted with the background removal model of the Pixal3D pipelines (rembg), at full size.
@@ -125,7 +126,7 @@ def run(outputDir, sfmData, rembg="birefnet", viewIds=None, log=logger.info):
             mask = np.asarray(model(image).getchannel("A"))
         if not (mask > 0.8 * 255).any():
             logger.warning(f"View {viewId}: empty mask (no object found)")
-        path = os.path.join(outputDir, f"{viewId}.png")
+        path = os.path.join(outputDir, os.path.splitext(os.path.basename(imagePath))[0] + ".png")
         image_io.writeMask(path, mask)
         paths.append(path)
     log(f"Done in {time.time() - start:.1f}s: {len(paths)} masks in {outputDir}")

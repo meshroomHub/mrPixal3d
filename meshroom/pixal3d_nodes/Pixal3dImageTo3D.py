@@ -1,4 +1,4 @@
-__version__ = "1.1"
+__version__ = "1.2"
 
 import logging
 
@@ -124,8 +124,8 @@ The default settings (all models on the GPU, resolution 1536) need a 24 GB+ GPU.
         desc.File(
             name="outputFolder",
             label="Output Folder",
-            description="Folder of the outputs of every view: <viewId>_mesh.glb, <viewId>_preprocessed.png, "
-                        "<viewId>_camera.json.",
+            description="Folder of the outputs of every view, named after the view image file (without "
+                        "extension): <image>_mesh.glb, <image>_preprocessed.png, <image>_camera.json.",
             value="{nodeCacheFolder}",
         ),
         desc.File(
@@ -133,7 +133,7 @@ The default settings (all models on the GPU, resolution 1536) need a 24 GB+ GPU.
             label="Mesh",
             description="Textured mesh of each view (GLB, PBR materials).",
             semantic="3d",
-            value="{nodeCacheFolder}/<VIEW_ID>_mesh.glb",
+            value="{nodeCacheFolder}/<FILESTEM>_mesh.glb",
         ),
         desc.File(
             name="preprocessed",
@@ -141,7 +141,7 @@ The default settings (all models on the GPU, resolution 1536) need a 24 GB+ GPU.
             description="Each view image after background removal (or masking) and centering, as seen by "
                         "Pixal3D.",
             semantic="image",
-            value="{nodeCacheFolder}/<VIEW_ID>_preprocessed.png",
+            value="{nodeCacheFolder}/<FILESTEM>_preprocessed.png",
         ),
         desc.File(
             name="camera",
@@ -149,7 +149,7 @@ The default settings (all models on the GPU, resolution 1536) need a 24 GB+ GPU.
             description="Camera of each view used for the pixel alignment: camera_angle_x (radians), distance, "
                         "mesh_scale.",
             semantic="textFile",
-            value="{nodeCacheFolder}/<VIEW_ID>_camera.json",
+            value="{nodeCacheFolder}/<FILESTEM>_camera.json",
         ),
     ]
 

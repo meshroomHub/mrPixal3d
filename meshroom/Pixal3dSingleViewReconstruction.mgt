@@ -307,7 +307,7 @@
             }
         },
         "Pixal3dImageMasking": {
-            "1.0": {
+            "1.1": {
                 "inputs": {
                     "sfmData": {
                         "type": "File",
@@ -341,13 +341,13 @@
                     },
                     "masks": {
                         "type": "File",
-                        "value": "{nodeCacheFolder}/<VIEW_ID>.png"
+                        "value": "{nodeCacheFolder}/<FILESTEM>.png"
                     }
                 }
             }
         },
         "Pixal3dImageTo3D": {
-            "1.1": {
+            "1.2": {
                 "inputs": {
                     "sfmData": {
                         "type": "File",
@@ -435,15 +435,15 @@
                     },
                     "output": {
                         "type": "File",
-                        "value": "{nodeCacheFolder}/<VIEW_ID>_mesh.glb"
+                        "value": "{nodeCacheFolder}/<FILESTEM>_mesh.glb"
                     },
                     "preprocessed": {
                         "type": "File",
-                        "value": "{nodeCacheFolder}/<VIEW_ID>_preprocessed.png"
+                        "value": "{nodeCacheFolder}/<FILESTEM>_preprocessed.png"
                     },
                     "camera": {
                         "type": "File",
-                        "value": "{nodeCacheFolder}/<VIEW_ID>_camera.json"
+                        "value": "{nodeCacheFolder}/<FILESTEM>_camera.json"
                     }
                 }
             }
@@ -474,7 +474,7 @@
         },
         "Pixal3dImageMasking_1": {
             "nodeType": "Pixal3dImageMasking",
-            "version": "1.0",
+            "version": "1.1",
             "position": [
                 -57,
                 -43
@@ -485,7 +485,7 @@
         },
         "Pixal3dImageTo3D_1": {
             "nodeType": "Pixal3dImageTo3D",
-            "version": "1.1",
+            "version": "1.2",
             "position": [
                 153,
                 -43

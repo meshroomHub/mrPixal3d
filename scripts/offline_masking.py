@@ -3,7 +3,7 @@
     rez env pixal3d-1.0.0 pixal3d_nnModels-1.0.0 naf-1.0.0 aliceVision-develop -- \
         python offline_masking.py --sfm_data sfm.abc --output_dir masks
 
-Writes masks/<viewId>.png (8 bit grey, white = object), for --masks_folder of offline_inference(_mv).py.
+Writes masks/<image stem>.png (8 bit grey, white = object), for --masks_folder of offline_inference(_mv).py.
 """
 import argparse
 import logging
